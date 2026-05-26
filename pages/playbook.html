@@ -11,12 +11,17 @@
   <!-- Header Navigation -->
   <header>
     <div class="header-content">
-      <a href="../index.html" class="logo">⚔️ BRUTAL PLAYBOOK</a>
-      <nav>
+      <a href="../index.html" class="logo"><span class="logo-long">⚔️ BRUTAL PLAYBOOK</span><span class="logo-short">⚔️ BP</span></a>
+      <nav id="main-nav">
         <a href="../index.html">Home</a>
         <a href="#phases">Phases</a>
         <a href="#quick-nav">Jump</a>
       </nav>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
   </header>
 
@@ -72,6 +77,19 @@
       <small>Interactive • Responsive • Gamified</small>
     </p>
   </footer>
+
+  <!-- Modal for Section Content -->
+  <div class="modal-overlay" id="section-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Section Title</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-content" id="modal-body">
+        <!-- Content will be injected here -->
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="../js/content-data.js"></script>
@@ -146,38 +164,44 @@
       const carousel = document.getElementById('phases-carousel');
       carousel.innerHTML = phases.map((phase, phaseIndex) => {
         const sectionCount = (phase.sections || []).length;
+
         return `
         <div class="carousel-item card animate-slide-up" style="min-height: 600px; display: flex; flex-direction: column;">
           <div style="flex: 1; display: flex; flex-direction: column;">
-            <h2 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-primary);">
+            <h2 style="margin-top: 0; margin-bottom: 0.5rem; color: var(--text-primary);">
               ${phase.title}
             </h2>
-            <p class="text-secondary mb-lg" style="margin-top: -0.5rem;">${phase.subtitle}</p>
+            <p class="text-secondary mb-lg" style="margin-top: 0; font-size: 0.95rem;">${phase.subtitle}</p>
 
-            <!-- Sections Carousel -->
-            <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
-              <div class="carousel-inner sections-carousel" id="sections-carousel-${phaseIndex}" style="flex: 1; display: flex; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
-                ${(phase.sections || []).map((section, sIdx) => `
-                  <div class="carousel-item card" style="padding: 1.5rem; flex: 0 0 100%;">
-                    <h3 style="margin-top: 0; color: var(--text-accent); margin-bottom: 1rem;">
-                      ${section.heading}
-                    </h3>
-                    <div class="card-fixed" style="height: 280px;">
-                      <div class="card-content">
-                        <p style="white-space: pre-wrap; line-height: 1.7; margin: 0; color: var(--text-primary);">
+            <!-- Nested Carousel for Section Cards -->
+            <div style="flex: 1; display: flex; flex-direction: column; position: relative; gap: var(--spacing-md);">
+              <div class="carousel-inner" id="nested-carousel-${phaseIndex}" style="flex: 1; display: flex; gap: var(--spacing-lg); overflow-x: auto; scroll-behavior: smooth; padding: var(--spacing-lg);">
+                ${(phase.sections || []).map((section, sIdx) => {
+                  return `
+                    <div class="section-card card" onclick="openModal('${phaseIndex}', '${sIdx}')" style="flex: 0 0 100%; height: 420px; cursor: pointer; position: relative; display: flex; flex-direction: column; padding: var(--spacing-lg);">
+                      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+                        <h3 style="margin: 0 0 1rem 0; color: var(--text-accent); font-size: var(--font-size-lg); line-height: 1.3; flex-shrink: 0;">
+                          ${section.heading}
+                        </h3>
+                        <p style="white-space: pre-wrap; line-height: 1.6; margin: 0; color: var(--text-primary); font-size: 0.95rem; overflow-y: auto; flex: 1;">
                           ${section.content}
                         </p>
                       </div>
+                      <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1); font-size: 0.85rem; color: var(--text-accent); font-weight: 600; flex-shrink: 0;">
+                        Click to expand ↗
+                      </div>
                     </div>
-                  </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
-              <div class="carousel-nav" style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; align-items: center;">
-                <button class="carousel-btn" onclick="scrollSectionCarousel(${phaseIndex}, -1)">←</button>
+
+              <!-- Nested Carousel Navigation -->
+              <div style="display: flex; gap: var(--spacing-md); justify-content: center; align-items: center; padding: var(--spacing-md) 0; border-top: 2px solid var(--border-light); flex-shrink: 0;">
+                <button class="carousel-btn" onclick="scrollNestedCarousel(${phaseIndex}, -1)" style="width: 44px; height: 44px; font-size: 1rem; min-width: 44px;">←</button>
                 <span style="flex: 1; text-align: center; color: var(--text-secondary); font-size: 0.875rem; white-space: nowrap;">
-                  Section <span class="section-counter-${phaseIndex}">1</span> / <span class="section-total-${phaseIndex}">${sectionCount}</span>
+                  Card <span class="nested-counter-${phaseIndex}">1</span> / <span class="nested-total-${phaseIndex}">${sectionCount}</span>
                 </span>
-                <button class="carousel-btn" onclick="scrollSectionCarousel(${phaseIndex}, 1)">→</button>
+                <button class="carousel-btn" onclick="scrollNestedCarousel(${phaseIndex}, 1)" style="width: 44px; height: 44px; font-size: 1rem; min-width: 44px;">→</button>
               </div>
             </div>
           </div>
@@ -188,9 +212,9 @@
       // Update phase total
       document.getElementById('phase-total').textContent = totalPhases;
       
-      // Initialize section indices
+      // Initialize nested carousel indices
       phases.forEach((phase, idx) => {
-        window[`sectionIndex_${idx}`] = 0;
+        window[`nestedIndex_${idx}`] = 0;
       });
     }
 
@@ -237,30 +261,86 @@
       updatePhaseIndicator();
     }
 
-    function scrollSectionCarousel(phaseIndex, direction) {
-      const carousel = document.getElementById(`sections-carousel-${phaseIndex}`);
-      if (!carousel) return;
+    function scrollNestedCarousel(phaseIndex, direction) {
+      const nestedCarousel = document.getElementById(`nested-carousel-${phaseIndex}`);
+      if (!nestedCarousel) return;
 
-      const totalSections = carousel.children.length;
-      let currentIndex = window[`sectionIndex_${phaseIndex}`] || 0;
+      const cardWidth = nestedCarousel.children[0]?.offsetWidth || 0;
+      if (cardWidth === 0) return;
+
+      // Get current scroll position
+      let currentScroll = nestedCarousel.scrollLeft;
+      let cardIndex = Math.round(currentScroll / (cardWidth + 24)); // 24px is gap
       
       // Update index
-      currentIndex = Math.max(0, Math.min(totalSections - 1, currentIndex + direction));
-      window[`sectionIndex_${phaseIndex}`] = currentIndex;
+      cardIndex = Math.max(0, Math.min(nestedCarousel.children.length - 1, cardIndex + direction));
+      
+      // Store new index
+      window[`nestedIndex_${phaseIndex}`] = cardIndex;
 
-      // Move carousel using transform
-      const translateAmount = -100 * currentIndex;
-      carousel.style.transform = `translateX(${translateAmount}%)`;
+      // Scroll to new card
+      const scrollTo = cardIndex * (cardWidth + 24);
+      nestedCarousel.scroll({
+        left: scrollTo,
+        behavior: 'smooth'
+      });
 
       // Update counter
-      const counter = document.querySelector(`.section-counter-${phaseIndex}`);
+      const counter = document.querySelector(`.nested-counter-${phaseIndex}`);
       if (counter) {
-        counter.textContent = currentIndex + 1;
+        counter.textContent = cardIndex + 1;
       }
 
       // Play sound
       playSound(523.25, 0.05);
     }
+    function openModal(phaseIndex, sectionIndex) {
+      const phases = currentPlaybook.phases || currentPlaybook.chapters || [];
+      const phase = phases[phaseIndex];
+      const section = phase.sections[sectionIndex];
+
+      if (!section) return;
+
+      // Set modal content
+      document.getElementById('modal-title').textContent = section.heading;
+      document.getElementById('modal-body').innerHTML = `
+        <p style="white-space: pre-wrap; line-height: 1.8; margin: 0;">
+          ${section.content}
+        </p>
+      `;
+
+      // Show modal
+      const modal = document.getElementById('section-modal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // Play sound
+      playSound(659.25, 0.05);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('section-modal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      playSound(523.25, 0.05);
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('section-modal');
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Close modal with Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          closeModal();
+        }
+      });
+    });
 
     // Sound effects
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -294,6 +374,31 @@
         btn.addEventListener('click', () => playSound(523.25, 0.05));
       });
     });
+  </script>
+  <script>
+    (function() {
+      const hamburger = document.getElementById('hamburger');
+      const nav = document.getElementById('main-nav');
+      hamburger.addEventListener('click', function() {
+        const open = nav.classList.toggle('nav-open');
+        hamburger.classList.toggle('is-active', open);
+        hamburger.setAttribute('aria-expanded', open);
+      });
+      document.addEventListener('click', function(e) {
+        if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+          nav.classList.remove('nav-open');
+          hamburger.classList.remove('is-active');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      });
+      nav.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          nav.classList.remove('nav-open');
+          hamburger.classList.remove('is-active');
+          hamburger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    })();
   </script>
 </body>
 </html>
