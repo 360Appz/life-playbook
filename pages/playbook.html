@@ -212,10 +212,15 @@
       // Update phase total
       document.getElementById('phase-total').textContent = totalPhases;
       
-      // Initialize nested carousel indices
+      // Initialize nested carousel indices and buttons
       phases.forEach((phase, idx) => {
         window[`nestedIndex_${idx}`] = 0;
       });
+
+      // Initialize button states after DOM renders
+      setTimeout(() => {
+        initializeNestedCarouselButtons();
+      }, 100);
     }
 
     function loadQuickNav() {
@@ -268,18 +273,21 @@
       const cardWidth = nestedCarousel.children[0]?.offsetWidth || 0;
       if (cardWidth === 0) return;
 
-      // Get current scroll position
-      let currentScroll = nestedCarousel.scrollLeft;
-      let cardIndex = Math.round(currentScroll / (cardWidth + 24)); // 24px is gap
-      
+      const totalCards = nestedCarousel.children.length;
+      let currentIndex = window[`nestedIndex_${phaseIndex}`] || 0;
+      const nextIndex = currentIndex + direction;
+
+      // Don't navigate past the limits (no wrapping)
+      if (nextIndex < 0 || nextIndex >= totalCards) {
+        return; // Stop at boundaries - no navigation
+      }
+
       // Update index
-      cardIndex = Math.max(0, Math.min(nestedCarousel.children.length - 1, cardIndex + direction));
-      
-      // Store new index
-      window[`nestedIndex_${phaseIndex}`] = cardIndex;
+      currentIndex = nextIndex;
+      window[`nestedIndex_${phaseIndex}`] = currentIndex;
 
       // Scroll to new card
-      const scrollTo = cardIndex * (cardWidth + 24);
+      const scrollTo = currentIndex * (cardWidth + 24); // 24px is gap
       nestedCarousel.scroll({
         left: scrollTo,
         behavior: 'smooth'
@@ -288,11 +296,55 @@
       // Update counter
       const counter = document.querySelector(`.nested-counter-${phaseIndex}`);
       if (counter) {
-        counter.textContent = cardIndex + 1;
+        counter.textContent = currentIndex + 1;
       }
+
+      // Update button states (disable at boundaries)
+      updateNestedCarouselButtons(phaseIndex, currentIndex, totalCards);
 
       // Play sound
       playSound(523.25, 0.05);
+    }
+
+    function updateNestedCarouselButtons(phaseIndex, currentIndex, totalCards) {
+      // Find the navigation buttons for this phase
+      const buttons = document.querySelectorAll(`button[onclick*="scrollNestedCarousel(${phaseIndex}"]`);
+      
+      if (buttons.length >= 2) {
+        const prevBtn = buttons[0]; // Left button
+        const nextBtn = buttons[1]; // Right button
+
+        // Disable/Enable buttons based on position
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === totalCards - 1;
+
+        // Visual styling for disabled state
+        if (currentIndex === 0) {
+          prevBtn.style.opacity = '0.5';
+          prevBtn.style.cursor = 'not-allowed';
+        } else {
+          prevBtn.style.opacity = '1';
+          prevBtn.style.cursor = 'pointer';
+        }
+
+        if (currentIndex === totalCards - 1) {
+          nextBtn.style.opacity = '0.5';
+          nextBtn.style.cursor = 'not-allowed';
+        } else {
+          nextBtn.style.opacity = '1';
+          nextBtn.style.cursor = 'pointer';
+        }
+      }
+    }
+
+    // Initialize button states when phase loads
+    function initializeNestedCarouselButtons() {
+      const phases = currentPlaybook.phases || currentPlaybook.chapters || [];
+      phases.forEach((phase, phaseIndex) => {
+        const totalCards = (phase.sections || []).length;
+        window[`nestedIndex_${phaseIndex}`] = 0;
+        updateNestedCarouselButtons(phaseIndex, 0, totalCards);
+      });
     }
     function openModal(phaseIndex, sectionIndex) {
       const phases = currentPlaybook.phases || currentPlaybook.chapters || [];
