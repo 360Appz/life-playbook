@@ -11,12 +11,17 @@
   <!-- Header Navigation -->
   <header>
     <div class="header-content">
-      <a href="../index.html" class="logo">⚔️ BRUTAL PLAYBOOK</a>
-      <nav>
+      <a href="../index.html" class="logo"><span class="logo-long">⚔️ BRUTAL PLAYBOOK</span><span class="logo-short">⚔️ BP</span></a>
+      <nav id="main-nav">
         <a href="../index.html">Home</a>
         <a href="#phases">Phases</a>
         <a href="#quick-nav">Jump</a>
       </nav>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
   </header>
 
@@ -294,6 +299,31 @@
         btn.addEventListener('click', () => playSound(523.25, 0.05));
       });
     });
+  </script>
+  <script>
+    (function() {
+      const hamburger = document.getElementById('hamburger');
+      const nav = document.getElementById('main-nav');
+      hamburger.addEventListener('click', function() {
+        const open = nav.classList.toggle('nav-open');
+        hamburger.classList.toggle('is-active', open);
+        hamburger.setAttribute('aria-expanded', open);
+      });
+      document.addEventListener('click', function(e) {
+        if (!hamburger.contains(e.target) && !nav.contains(e.target)) {
+          nav.classList.remove('nav-open');
+          hamburger.classList.remove('is-active');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      });
+      nav.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          nav.classList.remove('nav-open');
+          hamburger.classList.remove('is-active');
+          hamburger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    })();
   </script>
 </body>
 </html>
