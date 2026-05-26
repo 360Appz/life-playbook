@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Brutal Playbook - Interactive Playbook Viewer">
+  <title>The Brutal Playbook - Explore</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header>
+    <div class="header-content">
+      <a href="../index.html" class="logo">⚔️ BRUTAL PLAYBOOK</a>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="#phases">Phases</a>
+        <a href="#quick-nav">Jump</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Playbook Selector -->
+  <section class="container mt-lg mb-lg">
+    <div class="grid grid-3" id="playbook-selector">
+      <!-- Dynamically populated -->
+    </div>
+  </section>
+
+  <!-- Active Playbook Display -->
+  <section class="container mt-lg mb-xl" id="playbook-content">
+    <!-- Header -->
+    <div id="playbook-header" class="card card-primary animate-slide-up mb-lg">
+      <h1 id="playbook-title" style="color: white; margin-top: 0;"></h1>
+      <p id="playbook-subtitle" style="color: rgba(255,255,255,0.95); font-size: 1.1rem; margin: 0;"></p>
+    </div>
+
+    <!-- Quick Navigation - Phase Selector -->
+    <div class="mb-lg">
+      <h3 class="mb-md">📚 Phases/Chapters</h3>
+      <div class="flex gap-sm" id="quick-nav" style="overflow-x: auto; padding-bottom: 0.5rem; -webkit-overflow-scrolling: touch;">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+    <!-- Main Carousel for Phases/Chapters -->
+    <div class="carousel mb-xl">
+      <div class="carousel-inner" id="phases-carousel" style="min-height: 600px;">
+        <!-- Dynamically populated -->
+      </div>
+      <div class="carousel-nav">
+        <button class="carousel-btn" onclick="scrollPhasesCarousel(-1)">←</button>
+        <button class="carousel-btn" onclick="scrollPhasesCarousel(1)">→</button>
+      </div>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="card" style="text-align: center;">
+      <p style="margin: 0; color: var(--text-secondary);">
+        <span id="phase-counter">1</span> / <span id="phase-total">1</span> phases
+        <div class="progress-bar" style="margin: 1rem 0;">
+          <div class="progress-bar-fill" id="phase-progress" style="width: 0%;"></div>
+        </div>
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: var(--bg-secondary); padding: 2rem; text-align: center; margin-top: 4rem; border-top: 2px solid var(--border-light);">
+    <p style="color: var(--text-secondary); margin: 0;">
+      The Brutal Playbook™ | Explore, Learn, Transform<br>
+      <small>Interactive • Responsive • Gamified</small>
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/content-data.js"></script>
+  <script>
+    let currentPlaybook = null;
+    let currentPhaseIndex = 0;
+    let totalPhases = 0;
+
+    // Get URL parameters
+    function getUrlParameter(param) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(param) || 'original';
+    }
+
+    // Initialize page
+    function initializePage() {
+      const version = getUrlParameter('version');
+      loadPlaybook(version);
+      loadPlaybookSelector();
+    }
+
+    function loadPlaybookSelector() {
+      const selector = document.getElementById('playbook-selector');
+      const playbooks = [
+        { key: 'original', data: contentData.playbooks.original, emoji: '🔥' },
+        { key: 'christCentered', data: contentData.playbooks.christCentered, emoji: '✨' },
+        { key: 'missingChapters', data: contentData.playbooks.missingChapters, emoji: '🌙' }
+      ];
+
+      selector.innerHTML = playbooks.map(pb => `
+        <div class="card" style="cursor: pointer; transition: var(--transition-base);" onclick="loadPlaybook('${pb.key}')">
+          <div style="text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">${pb.emoji}</div>
+            <h3 style="margin-top: 0;">${pb.data.title}</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0;">${pb.data.subtitle.substring(0, 80)}...</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function loadPlaybook(version) {
+      const version_map = {
+        'original': 'original',
+        'christCentered': 'christCentered',
+        'missingChapters': 'missingChapters'
+      };
+
+      const playbook_key = version_map[version] || 'original';
+      currentPlaybook = contentData.playbooks[playbook_key];
+      currentPhaseIndex = 0;
+
+      // Update header
+      const header = document.getElementById('playbook-header');
+      header.style.background = currentPlaybook.color ? `linear-gradient(135deg, ${currentPlaybook.color}, ${adjustColor(currentPlaybook.color)})` : 'var(--primary-gradient)';
+      document.getElementById('playbook-title').textContent = currentPlaybook.title;
+      document.getElementById('playbook-subtitle').textContent = currentPlaybook.subtitle;
+
+      // Load phases/chapters into carousel
+      loadPhasesCarousel();
+      loadQuickNav();
+      updatePhaseIndicator();
+    }
+
+    function adjustColor(color) {
+      return color + '80';
+    }
+
+    function loadPhasesCarousel() {
+      const phases = currentPlaybook.phases || currentPlaybook.chapters || [];
+      totalPhases = phases.length;
+
+      const carousel = document.getElementById('phases-carousel');
+      carousel.innerHTML = phases.map((phase, phaseIndex) => {
+        const sectionCount = (phase.sections || []).length;
+        return `
+        <div class="carousel-item card animate-slide-up" style="min-height: 600px; display: flex; flex-direction: column;">
+          <div style="flex: 1; display: flex; flex-direction: column;">
+            <h2 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-primary);">
+              ${phase.title}
+            </h2>
+            <p class="text-secondary mb-lg" style="margin-top: -0.5rem;">${phase.subtitle}</p>
+
+            <!-- Sections Carousel -->
+            <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+              <div class="carousel-inner sections-carousel" id="sections-carousel-${phaseIndex}" style="flex: 1; display: flex; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                ${(phase.sections || []).map((section, sIdx) => `
+                  <div class="carousel-item card" style="padding: 1.5rem; flex: 0 0 100%;">
+                    <h3 style="margin-top: 0; color: var(--text-accent); margin-bottom: 1rem;">
+                      ${section.heading}
+                    </h3>
+                    <div class="card-fixed" style="height: 280px;">
+                      <div class="card-content">
+                        <p style="white-space: pre-wrap; line-height: 1.7; margin: 0; color: var(--text-primary);">
+                          ${section.content}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="carousel-nav" style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; align-items: center;">
+                <button class="carousel-btn" onclick="scrollSectionCarousel(${phaseIndex}, -1)">←</button>
+                <span style="flex: 1; text-align: center; color: var(--text-secondary); font-size: 0.875rem; white-space: nowrap;">
+                  Section <span class="section-counter-${phaseIndex}">1</span> / <span class="section-total-${phaseIndex}">${sectionCount}</span>
+                </span>
+                <button class="carousel-btn" onclick="scrollSectionCarousel(${phaseIndex}, 1)">→</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      }).join('');
+
+      // Update phase total
+      document.getElementById('phase-total').textContent = totalPhases;
+      
+      // Initialize section indices
+      phases.forEach((phase, idx) => {
+        window[`sectionIndex_${idx}`] = 0;
+      });
+    }
+
+    function loadQuickNav() {
+      const nav = document.getElementById('quick-nav');
+      const phases = currentPlaybook.phases || currentPlaybook.chapters || [];
+
+      nav.innerHTML = phases.map((phase, index) => `
+        <button 
+          class="btn ${index === currentPhaseIndex ? 'btn-primary' : 'btn-outline'}" 
+          onclick="goToPhase(${index})"
+          style="white-space: nowrap; flex-shrink: 0;"
+        >
+          ${phase.title.substring(0, 20)}
+        </button>
+      `).join('');
+    }
+
+    function updatePhaseIndicator() {
+      document.getElementById('phase-counter').textContent = currentPhaseIndex + 1;
+      const progress = ((currentPhaseIndex + 1) / totalPhases) * 100;
+      document.getElementById('phase-progress').style.width = progress + '%';
+      loadQuickNav();
+    }
+
+    function scrollPhasesCarousel(direction) {
+      const carousel = document.getElementById('phases-carousel');
+      const scrollAmount = carousel.parentElement.offsetWidth;
+      currentPhaseIndex = Math.max(0, Math.min(totalPhases - 1, currentPhaseIndex + direction));
+      carousel.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+      updatePhaseIndicator();
+    }
+
+    function goToPhase(index) {
+      currentPhaseIndex = index;
+      const carousel = document.getElementById('phases-carousel');
+      const item = carousel.children[index];
+      if (item) {
+        item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+      }
+      updatePhaseIndicator();
+    }
+
+    function scrollSectionCarousel(phaseIndex, direction) {
+      const carousel = document.getElementById(`sections-carousel-${phaseIndex}`);
+      if (!carousel) return;
+
+      const totalSections = carousel.children.length;
+      let currentIndex = window[`sectionIndex_${phaseIndex}`] || 0;
+      
+      // Update index
+      currentIndex = Math.max(0, Math.min(totalSections - 1, currentIndex + direction));
+      window[`sectionIndex_${phaseIndex}`] = currentIndex;
+
+      // Move carousel using transform
+      const translateAmount = -100 * currentIndex;
+      carousel.style.transform = `translateX(${translateAmount}%)`;
+
+      // Update counter
+      const counter = document.querySelector(`.section-counter-${phaseIndex}`);
+      if (counter) {
+        counter.textContent = currentIndex + 1;
+      }
+
+      // Play sound
+      playSound(523.25, 0.05);
+    }
+
+    // Sound effects
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(frequency = 440, duration = 0.1) {
+      try {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (e) {
+        // Audio context may not be available
+      }
+    }
+
+    // Play sound on button clicks
+    document.addEventListener('DOMContentLoaded', () => {
+      initializePage();
+      const buttons = document.querySelectorAll('.btn, .carousel-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => playSound(523.25, 0.05));
+      });
+    });
+  </script>
+</body>
+</html>

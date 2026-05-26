@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Question Deck - The Brutal Playbook</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header>
+    <div class="header-content">
+      <a href="../index.html" class="logo">⚔️ BRUTAL PLAYBOOK</a>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="../pages/playbook.html">Playbooks</a>
+        <a href="questions.html" style="color: var(--text-accent); font-weight: 700;">Questions</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section style="background: var(--primary-gradient); color: white; padding: 3rem var(--spacing-lg); text-align: center;">
+    <div class="container container-sm">
+      <h1 style="color: white; margin-top: 0;">⚡ Question Deck</h1>
+      <p style="color: rgba(255,255,255,0.95); font-size: 1.1rem; margin-bottom: 0;">
+        100+ brutally honest questions to uncover the truth about yourself
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="container mt-xl mb-xl">
+    <div class="grid grid-2 gap-lg">
+      <!-- Rapid Fire Questions -->
+      <div>
+        <h2 class="mb-lg">⚡ Rapid Fire Mode</h2>
+        <div id="rapid-fire-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Question of the Day Deck -->
+      <div>
+        <h2 class="mb-lg">📅 Deep Dive Questions</h2>
+        <div id="deep-dive-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Carousel -->
+  <section class="container mt-xl mb-xl">
+    <h2 class="text-center mb-lg">🎮 Interactive Mode</h2>
+    <div class="card">
+      <div class="carousel">
+        <div class="carousel-inner" id="question-carousel">
+          <!-- Dynamically populated -->
+        </div>
+        <div class="carousel-nav">
+          <button class="carousel-btn" onclick="scrollQuestionCarousel(-1)">←</button>
+          <button class="carousel-btn" onclick="scrollQuestionCarousel(1)">→</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-lg text-center">
+      <button class="btn btn-primary btn-lg" onclick="answerCurrentQuestion()">
+        Answer This Question
+      </button>
+    </div>
+  </section>
+
+  <!-- Your Responses -->
+  <section class="container mt-xl mb-xl">
+    <h2 class="mb-lg">📝 Your Responses</h2>
+    <div class="card" id="responses-container">
+      <p class="text-center text-secondary" style="margin: 2rem 0;">
+        No responses yet. Answer some questions to see them here!
+      </p>
+    </div>
+  </section>
+
+  <!-- Statistics -->
+  <section class="container mt-xl mb-xl">
+    <h2 class="text-center mb-lg">📊 Your Stats</h2>
+    <div class="grid grid-3 gap-lg">
+      <div class="card text-center">
+        <h3 id="total-questions" style="color: var(--text-accent); font-size: 2.5rem; margin: 0;">0</h3>
+        <p style="color: var(--text-secondary);">Questions Answered</p>
+      </div>
+      <div class="card text-center">
+        <h3 id="days-streak" style="color: var(--text-accent); font-size: 2.5rem; margin: 0;">0</h3>
+        <p style="color: var(--text-secondary);">Day Streak</p>
+      </div>
+      <div class="card text-center">
+        <h3 id="insights" style="color: var(--text-accent); font-size: 2.5rem; margin: 0;">0</h3>
+        <p style="color: var(--text-secondary);">Insights Gained</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: var(--bg-secondary); padding: 2rem; text-align: center; margin-top: 4rem; border-top: 2px solid var(--border-light);">
+    <p style="color: var(--text-secondary); margin: 0;">
+      The Brutal Playbook™ | Question Deck<br>
+      <small>Track • Reflect • Transform</small>
+    </p>
+  </footer>
+
+  <!-- Response Modal -->
+  <div id="response-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
+    <div class="card" style="max-width: 600px; width: 90%; animation: slide-in-up 0.3s ease-out;">
+      <button onclick="closeResponseModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+      <h2 id="modal-q" style="margin-top: 0;"></h2>
+      <textarea id="modal-answer" placeholder="Your honest answer..." style="width: 100%; height: 150px; padding: 1rem; border: 2px solid var(--border-light); border-radius: 12px; font-family: var(--font-family); font-size: 1rem; resize: vertical; margin: 1.5rem 0;"></textarea>
+      <button class="btn btn-primary btn-block" onclick="saveResponse()">Save Response</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/content-data.js"></script>
+  <script>
+    let currentQuestionIndex = 0;
+    let allQuestions = [];
+
+    function initializePage() {
+      loadRapidFireList();
+      loadDeepDiveList();
+      loadQuestionCarousel();
+      loadResponses();
+      updateStats();
+    }
+
+    function loadRapidFireList() {
+      const list = document.getElementById('rapid-fire-list');
+      const shuffled = gamificationEngine.getShuffledRapidFire();
+      
+      list.innerHTML = shuffled.slice(0, 15).filter(q => q && q.trim()).map((q, i) => `
+        <div class="card mb-md" style="cursor: pointer; transition: var(--transition-fast);" onclick="selectQuestion(${i})">
+          <p style="margin: 0; line-height: 1.5;">${i + 1}. ${q}</p>
+        </div>
+      `).join('');
+    }
+
+    function loadDeepDiveList() {
+      const list = document.getElementById('deep-dive-list');
+      const questions = contentData.questions.questionOfTheDay;
+      
+      list.innerHTML = questions.map((q, i) => `
+        <div class="card card-secondary mb-md" style="cursor: pointer; transition: var(--transition-fast);" onclick="selectQuestion(${i})">
+          <p style="margin: 0; line-height: 1.5; color: white;">${i + 1}. ${q}</p>
+        </div>
+      `).join('');
+    }
+
+    function loadQuestionCarousel() {
+      allQuestions = [
+        ...contentData.questions.rapidFire,
+        ...contentData.questions.questionOfTheDay
+      ];
+
+      const carousel = document.getElementById('question-carousel');
+      const shuffled = gamificationEngine.getShuffledRapidFire();
+
+      carousel.innerHTML = shuffled.slice(0, 20).filter(q => q && q.trim()).map((q, i) => `
+        <div class="carousel-item card card-primary">
+          <div style="color: white; display: flex; flex-direction: column; height: 100%; justify-content: center;">
+            <span style="font-size: 0.875rem; opacity: 0.9;">Question ${i + 1}</span>
+            <p style="font-size: 1.25rem; font-weight: 600; margin: 0; line-height: 1.5; color: white;">
+              ${q}
+            </p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function scrollQuestionCarousel(direction) {
+      const carousel = document.getElementById('question-carousel');
+      const scrollAmount = carousel.offsetWidth;
+      carousel.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+
+    function selectQuestion(index) {
+      currentQuestionIndex = index;
+    }
+
+    function answerCurrentQuestion() {
+      const shuffled = gamificationEngine.getShuffledRapidFire();
+      const question = shuffled[currentQuestionIndex % shuffled.length];
+      
+      document.getElementById('modal-q').textContent = question;
+      document.getElementById('modal-answer').value = '';
+      document.getElementById('response-modal').style.display = 'flex';
+    }
+
+    function closeResponseModal() {
+      document.getElementById('response-modal').style.display = 'none';
+    }
+
+    function saveResponse() {
+      const question = document.getElementById('modal-q').textContent;
+      const answer = document.getElementById('modal-answer').value;
+
+      if (answer.trim()) {
+        const responses = JSON.parse(localStorage.getItem('questionResponses') || '[]');
+        responses.push({
+          question: question,
+          answer: answer,
+          timestamp: new Date().toISOString(),
+          date: new Date().toLocaleDateString()
+        });
+        localStorage.setItem('questionResponses', JSON.stringify(responses));
+        
+        playSound(659.25, 0.15);
+        closeResponseModal();
+        loadResponses();
+        updateStats();
+        alert('✨ Response saved! You\'re building self-awareness.');
+      }
+    }
+
+    function loadResponses() {
+      const responses = JSON.parse(localStorage.getItem('questionResponses') || '[]');
+      const container = document.getElementById('responses-container');
+
+      if (responses.length === 0) {
+        container.innerHTML = `
+          <p class="text-center text-secondary" style="margin: 2rem 0;">
+            No responses yet. Answer some questions to see them here!
+          </p>
+        `;
+        return;
+      }
+
+      container.innerHTML = responses.reverse().map((r, i) => `
+        <div class="card mb-md" style="background: var(--bg-secondary);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <h4 style="margin: 0; flex: 1;">${r.question}</h4>
+            <span style="font-size: 0.875rem; color: var(--text-secondary); white-space: nowrap; margin-left: 1rem;">${r.date}</span>
+          </div>
+          <p style="margin: 0; line-height: 1.6; white-space: pre-wrap;">${r.answer}</p>
+        </div>
+      `).join('');
+    }
+
+    function updateStats() {
+      const responses = JSON.parse(localStorage.getItem('questionResponses') || '[]');
+      const dates = [...new Set(responses.map(r => r.date))];
+      
+      document.getElementById('total-questions').textContent = responses.length;
+      document.getElementById('insights').textContent = Math.floor(responses.length / 2);
+      
+      // Calculate streak
+      let streak = 0;
+      if (dates.length > 0) {
+        const today = new Date().toLocaleDateString();
+        let checkDate = new Date();
+        
+        for (let i = 0; i < 365; i++) {
+          const dateStr = checkDate.toLocaleDateString();
+          if (dates.includes(dateStr)) {
+            streak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+          } else {
+            break;
+          }
+        }
+      }
+      
+      document.getElementById('days-streak').textContent = streak;
+    }
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(frequency = 440, duration = 0.1) {
+      try {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (e) {
+        // Audio context may not be available
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initializePage);
+  </script>
+</body>
+</html>

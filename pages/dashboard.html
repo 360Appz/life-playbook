@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Dashboard - The Brutal Playbook</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header>
+    <div class="header-content">
+      <a href="../index.html" class="logo">⚔️ BRUTAL PLAYBOOK</a>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="../pages/playbook.html">Playbooks</a>
+        <a href="dashboard.html" style="color: var(--text-accent); font-weight: 700;">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Daily Challenge Section -->
+  <section style="background: linear-gradient(135deg, #FF6B35 0%, #FF8A5B 100%); color: white; padding: 3rem var(--spacing-lg);">
+    <div class="container container-sm text-center">
+      <h1 style="color: white; margin-top: 0;">🌟 Daily Adventure</h1>
+      <p style="font-size: 1.1rem; opacity: 0.95; margin-bottom: 0;">
+        Your personalized path to transformation, updated every day
+      </p>
+    </div>
+  </section>
+
+  <section class="container mt-xl mb-xl">
+    <!-- Daily Stats -->
+    <div class="grid grid-3 gap-lg mb-xl">
+      <div class="card text-center">
+        <div class="achievement-badge" style="animation: float 3s ease-in-out infinite;">📖</div>
+        <h3 style="color: var(--text-accent);">Sections Read</h3>
+        <p id="sections-count" style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-primary);">0</p>
+      </div>
+
+      <div class="card text-center">
+        <div class="achievement-badge" style="background: var(--secondary-gradient); animation: float 3s ease-in-out infinite 0.2s;">⚡</div>
+        <h3 style="color: var(--text-accent);">Questions Answered</h3>
+        <p id="questions-count" style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-primary);">0</p>
+      </div>
+
+      <div class="card text-center">
+        <div class="achievement-badge" style="background: var(--tertiary-gradient); animation: float 3s ease-in-out infinite 0.4s;">🎯</div>
+        <h3 style="color: var(--text-accent);">XP Earned</h3>
+        <p id="xp-count" style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-primary);">0</p>
+      </div>
+    </div>
+
+    <!-- Today's Missions -->
+    <div class="card mb-xl">
+      <h2 style="margin-top: 0;">🎮 Today's Missions</h2>
+      <div class="grid gap-lg">
+        <div style="display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.5rem; background: var(--bg-secondary); border-radius: 12px;">
+          <div style="font-size: 2rem;">📖</div>
+          <div style="flex: 1;">
+            <h4 style="margin-top: 0;">Read One Phase</h4>
+            <p style="color: var(--text-secondary); margin-bottom: 0;">Complete reading one full phase from any playbook.</p>
+          </div>
+          <button class="btn btn-primary" onclick="completeTask('phase')">Mark Done</button>
+        </div>
+
+        <div style="display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.5rem; background: var(--bg-secondary); border-radius: 12px;">
+          <div style="font-size: 2rem;">❓</div>
+          <div style="flex: 1;">
+            <h4 style="margin-top: 0;">Answer Rapid Fire Questions</h4>
+            <p style="color: var(--text-secondary); margin-bottom: 0;">Answer at least 3 rapid-fire questions honestly.</p>
+          </div>
+          <button class="btn btn-primary" onclick="completeTask('questions')">Mark Done</button>
+        </div>
+
+        <div style="display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.5rem; background: var(--bg-secondary); border-radius: 12px;">
+          <div style="font-size: 2rem;">💭</div>
+          <div style="flex: 1;">
+            <h4 style="margin-top: 0;">Reflect on Your Truth</h4>
+            <p style="color: var(--text-secondary); margin-bottom: 0;">Journal about one uncomfortable truth you discovered today.</p>
+          </div>
+          <button class="btn btn-primary" onclick="completeTask('reflect')">Mark Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote & Question Section -->
+    <div class="grid grid-2 gap-lg mb-xl">
+      <div class="card card-primary">
+        <h3 style="color: white; margin-top: 0;">💡 Quote of the Day</h3>
+        <div class="card-fixed">
+          <div class="card-content">
+            <blockquote style="font-size: 1.1rem; font-style: italic; color: white; line-height: 1.6; margin: 0;">
+              <span id="quote-text-daily"></span>
+              <br><br>
+              <strong>— <span id="quote-author-daily"></span></strong>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-secondary">
+        <h3 style="color: white; margin-top: 0;">❓ Today's Deep Question</h3>
+        <div class="card-fixed">
+          <div class="card-content">
+            <p style="color: white; font-size: 1.1rem; line-height: 1.6; margin: 0;">
+              <span id="qotd-text-daily"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Progress -->
+    <div class="card mb-xl">
+      <h2 style="margin-top: 0;">📊 This Week's Progress</h2>
+      <div class="progress-bar" style="margin: 1.5rem 0;">
+        <div class="progress-bar-fill" id="weekly-progress" style="width: 0%;"></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">
+        <div class="text-center">
+          <small style="color: var(--text-secondary);">Mon</small><br>
+          <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">✓</div>
+        </div>
+        <div class="text-center">
+          <small style="color: var(--text-secondary);">Tue</small><br>
+          <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">✓</div>
+        </div>
+        <div class="text-center">
+          <small style="color: var(--text-secondary);">Wed</small><br>
+          <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">✓</div>
+        </div>
+        <div class="text-center">
+          <small style="color: var(--text-secondary);">Thu</small><br>
+          <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">✓</div>
+        </div>
+        <div class="text-center">
+          <small style="color: var(--text-secondary);">Fri</small><br>
+          <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">○</div>
+        </div>
+        <div class="text-center">
+          <small style="color: var(--text-secondary);">Sat</small><br>
+          <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">○</div>
+        </div>
+        <div class="text-center">
+          <small style="color: var(--text-secondary);">Sun</small><br>
+          <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px; margin-top: 0.5rem;">○</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="card">
+      <h2 style="margin-top: 0;">🎯 What's Next?</h2>
+      <div class="grid gap-md">
+        <a href="../pages/playbook.html" class="btn btn-primary btn-block" style="text-align: center; text-decoration: none;">
+          Continue Reading Playbook
+        </a>
+        <a href="../pages/questions.html" class="btn btn-secondary btn-block" style="text-align: center; text-decoration: none;">
+          Answer More Questions
+        </a>
+        <a href="../index.html#daily-adventure" class="btn btn-outline btn-block" style="text-align: center; text-decoration: none;">
+          Back to Home
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: var(--bg-secondary); padding: 2rem; text-align: center; margin-top: 4rem; border-top: 2px solid var(--border-light);">
+    <p style="color: var(--text-secondary); margin: 0;">
+      The Brutal Playbook™ | Daily Dashboard<br>
+      <small>Track • Grow • Transform</small>
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="../js/content-data.js"></script>
+  <script>
+    function initializeDashboard() {
+      loadDailyQuote();
+      loadDailyQuestion();
+      updateStats();
+      calculateProgress();
+    }
+
+    function loadDailyQuote() {
+      const quote = gamificationEngine.getDailyQuote();
+      document.getElementById('quote-text-daily').textContent = `"${quote.text}"`;
+      document.getElementById('quote-author-daily').textContent = quote.author;
+    }
+
+    function loadDailyQuestion() {
+      const qotd = gamificationEngine.getQuestionOfTheDay();
+      document.getElementById('qotd-text-daily').textContent = qotd;
+    }
+
+    function updateStats() {
+      const responses = JSON.parse(localStorage.getItem('questionResponses') || '[]');
+      const tasks = JSON.parse(localStorage.getItem('completedTasks') || '{}');
+      
+      const today = new Date().toLocaleDateString();
+      const todayResponses = responses.filter(r => r.date === today).length;
+      
+      document.getElementById('sections-count').textContent = '12';
+      document.getElementById('questions-count').textContent = todayResponses;
+      document.getElementById('xp-count').textContent = (todayResponses * 50) + (Object.keys(tasks).length * 100);
+    }
+
+    function calculateProgress() {
+      const weekDays = 7;
+      const completedDays = 4;
+      const progress = (completedDays / weekDays) * 100;
+      document.getElementById('weekly-progress').style.width = progress + '%';
+    }
+
+    function completeTask(taskType) {
+      const tasks = JSON.parse(localStorage.getItem('completedTasks') || '{}');
+      const today = new Date().toLocaleDateString();
+      
+      if (!tasks[today]) {
+        tasks[today] = [];
+      }
+      
+      if (!tasks[today].includes(taskType)) {
+        tasks[today].push(taskType);
+      }
+      
+      localStorage.setItem('completedTasks', JSON.stringify(tasks));
+      playSound(659.25, 0.2);
+      alert('✨ Task completed! Great work!');
+      updateStats();
+    }
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(frequency = 440, duration = 0.1) {
+      try {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (e) {
+        // Audio context may not be available
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeDashboard);
+  </script>
+</body>
+</html>

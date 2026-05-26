@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="The Brutal Playbook: An interactive, gamified adventure to unfuck your life">
+  <title>The Brutal Playbook - Adventure Awaits</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">⚔️ BRUTAL PLAYBOOK</a>
+      <nav>
+        <a href="#playbooks">Playbooks</a>
+        <a href="#daily-adventure">Daily Adventure</a>
+        <a href="#quest-info">Info</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Landing Hero Section -->
+  <section class="viewport-height" id="hero">
+    <div class="container container-sm text-center">
+      <div class="animate-slide-up">
+        <h1 style="font-size: 3.5rem; margin-bottom: 1.5rem;">
+          🔥 Unfuck Your Life
+        </h1>
+        <p style="font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.5;">
+          An interactive adventure through brutal truth, grace-filled discipline, and the wisdom you've been avoiding.
+        </p>
+        
+        <!-- Daily Gamification Intro -->
+        <div class="card card-primary animate-glow" style="margin-bottom: 2rem;">
+          <h3 style="color: white; margin-top: 0;">📅 Today's Quest</h3>
+          <p id="daily-question" style="color: rgba(255,255,255,0.95); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;"></p>
+          <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 0%; animation: pulse 2s ease-in-out infinite;"></div>
+          </div>
+        </div>
+
+        <!-- Main CTA -->
+        <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+          <a href="pages/playbook.html" class="btn btn-primary btn-lg">
+            Begin Your Adventure
+          </a>
+          <a href="#playbooks" class="btn btn-outline btn-lg">
+            Explore Playbooks
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Playbooks Overview Section -->
+  <section class="container mt-xl mb-xl" id="playbooks">
+    <h2 class="text-center mb-xl">Choose Your Path 🗺️</h2>
+    
+    <div class="grid grid-3">
+      <!-- Original Playbook -->
+      <div class="card perspective">
+        <div class="card-3d">
+          <h3>The Brutal Playbook</h3>
+          <p>The unfiltered truth about change. No bullshit, no comfort. Just systems that work.</p>
+          
+          <div class="progress-bar" style="margin: 1rem 0;">
+            <div class="progress-bar-fill" style="width: 100%;"></div>
+          </div>
+          
+          <ul style="list-style: none; margin: 1rem 0; color: var(--text-secondary);">
+            <li>✓ 5 Transformative Phases</li>
+            <li>✓ Triage & Systems Framework</li>
+            <li>✓ Research Protocols</li>
+            <li>✓ Hard Conversations Guide</li>
+          </ul>
+          
+          <a href="pages/playbook.html?version=original" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+            Start Here
+          </a>
+        </div>
+      </div>
+
+      <!-- Christ-Centered Playbook -->
+      <div class="card perspective">
+        <div class="card-3d">
+          <h3>The Playbook (Revised)</h3>
+          <p>Grace + Discipline. The same brutal truth, now centered on Christ and genuine joy.</p>
+          
+          <div class="progress-bar" style="margin: 1rem 0;">
+            <div class="progress-bar-fill" style="width: 100%; background: var(--secondary-gradient);"></div>
+          </div>
+          
+          <ul style="list-style: none; margin: 1rem 0; color: var(--text-secondary);">
+            <li>✓ Christ-Centered Framework</li>
+            <li>✓ Grace & Discipline Balance</li>
+            <li>✓ Spiritual + Practical Wisdom</li>
+            <li>✓ Purpose & Stewardship</li>
+          </ul>
+          
+          <a href="pages/playbook.html?version=christCentered" class="btn btn-secondary btn-block" style="margin-top: 1.5rem;">
+            Walk the Path
+          </a>
+        </div>
+      </div>
+
+      <!-- Missing Chapters -->
+      <div class="card perspective">
+        <div class="card-3d">
+          <h3>The Missing Chapters</h3>
+          <p>What got left out: Suffering, Trauma, Grief, Neurodivergence, Dark Nights of the Soul.</p>
+          
+          <div class="progress-bar" style="margin: 1rem 0;">
+            <div class="progress-bar-fill" style="width: 100%; background: var(--tertiary-gradient);"></div>
+          </div>
+          
+          <ul style="list-style: none; margin: 1rem 0; color: var(--text-secondary);">
+            <li>✓ 5 Critical Chapters</li>
+            <li>✓ Theology of the Cross</li>
+            <li>✓ Nervous System Wisdom</li>
+            <li>✓ Hope in Dark Places</li>
+          </ul>
+          
+          <a href="pages/playbook.html?version=missingChapters" class="btn btn-block" style="background: var(--tertiary-gradient); color: white; margin-top: 1.5rem; border: none;">
+            Go Deeper
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Daily Adventure Section -->
+  <section class="container mt-xl mb-xl" id="daily-adventure">
+    <h2 class="text-center mb-xl">Daily Adventure 🎮</h2>
+    
+    <div class="grid grid-2">
+      <!-- Quote of the Day -->
+      <div class="card card-primary">
+        <h3 style="color: white; margin-top: 0;">💡 Quote of the Day</h3>
+        <div class="card-fixed">
+          <div class="card-content">
+            <blockquote style="font-size: 1.25rem; font-style: italic; color: white; line-height: 1.6;">
+              <span id="quote-text"></span>
+              <br><br>
+              <strong>— <span id="quote-author"></span></strong>
+            </blockquote>
+          </div>
+        </div>
+        <button class="btn btn-outline" style="margin-top: 1rem; border-color: white; color: white; width: 100%;" onclick="loadNewQuote()">
+          Get New Quote →
+        </button>
+      </div>
+
+      <!-- Question of the Day -->
+      <div class="card card-secondary">
+        <h3 style="color: white; margin-top: 0;">❓ Question of the Day</h3>
+        <div class="card-fixed">
+          <div class="card-content">
+            <p style="color: white; font-size: 1.2rem; line-height: 1.6; margin: 0;">
+              <span id="qotd-text"></span>
+            </p>
+          </div>
+        </div>
+        <button class="btn btn-outline" style="margin-top: 1rem; border-color: white; color: white; width: 100%;" onclick="loadNewQOTD()">
+          New Question →
+        </button>
+      </div>
+    </div>
+
+    <!-- Rapid Fire Questions Carousel -->
+    <div style="margin-top: 3rem;">
+      <h3 class="text-center mb-lg">⚡ Rapid Fire Questions</h3>
+      <div class="carousel">
+        <div class="carousel-inner" id="rapid-fire-carousel">
+          <!-- Dynamically populated -->
+        </div>
+        <div class="carousel-nav">
+          <button class="carousel-btn" onclick="scrollCarousel(-1)">←</button>
+          <button class="carousel-btn" onclick="scrollCarousel(1)">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gamification Progress Section -->
+  <section class="container mt-xl mb-xl" id="quest-info">
+    <h2 class="text-center mb-xl">Your Journey 🗺️</h2>
+    
+    <div class="card" style="background: linear-gradient(135deg, #FFF5F3 0%, #F8F7FF 100%);">
+      <div class="flex-center" style="gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem;">
+        <div class="text-center">
+          <div class="achievement-badge">📖</div>
+          <h3>Playbooks</h3>
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">Explore 3 Complete Guides</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="achievement-badge" style="background: var(--secondary-gradient);">🎯</div>
+          <h3>100+ Questions</h3>
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">Daily Refreshed & Shuffled</p>
+        </div>
+        
+        <div class="text-center">
+          <div class="achievement-badge" style="background: var(--tertiary-gradient);">✨</div>
+          <h3>Gamified</h3>
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">Different Every Hour</p>
+        </div>
+      </div>
+
+      <div style="border-top: 2px solid var(--border-light); padding-top: 2rem;">
+        <h3>How It Works</h3>
+        <div class="grid grid-2" style="margin-top: 1rem;">
+          <div>
+            <h4 style="color: var(--text-accent); margin-top: 0;">🌟 Daily Quest</h4>
+            <p>Each day brings a new question designed to uncover uncomfortable truths about yourself.</p>
+          </div>
+          <div>
+            <h4 style="color: var(--text-accent); margin-top: 0;">⏰ Hourly Shuffle</h4>
+            <p>Content shuffles and reshuffles every hour with dynamic styling and energy.</p>
+          </div>
+          <div>
+            <h4 style="color: var(--text-accent); margin-top: 0;">🎮 Gamified Experience</h4>
+            <p>Progress through phases, unlock insights, and build systems that actually work.</p>
+          </div>
+          <div>
+            <h4 style="color: var(--text-accent); margin-top: 0;">🔊 Immersive Design</h4>
+            <p>Animations, sound effects, and creative interactions keep you engaged.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="container mt-xl mb-xl">
+    <div class="card card-primary text-center">
+      <h2 style="color: white; margin-top: 0;">Ready to Begin?</h2>
+      <p style="color: rgba(255,255,255,0.95); font-size: 1.1rem; margin-bottom: 2rem;">
+        Stop lying to yourself. Start building systems that work.<br>The brutal truth awaits.
+      </p>
+      <a href="pages/playbook.html" class="btn btn-outline" style="border-color: white; color: white; font-size: 1.1rem; padding: 1rem 2rem;">
+        Enter the Adventure ⚔️
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background: var(--bg-secondary); padding: 2rem; text-align: center; margin-top: 4rem; border-top: 2px solid var(--border-light);">
+    <p style="color: var(--text-secondary); margin: 0;">
+      The Brutal Playbook™ | A No-Bullshit Guide to Unfucking Your Life<br>
+      <small>Light Mode • Fully Responsive • Cross-Platform • Interactive Adventure</small>
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/content-data.js"></script>
+  <script>
+    // Initialize Daily Gamification
+    function initializeDailyElements() {
+      // Load Question of the Day
+      loadNewQOTD();
+      
+      // Load Quote of the Day
+      loadNewQuote();
+      
+      // Load Rapid Fire Questions Carousel
+      loadRapidFireCarousel();
+    }
+
+    function loadNewQOTD() {
+      const qotd = gamificationEngine.getRandomQuestion();
+      document.getElementById('qotd-text').textContent = qotd;
+      document.getElementById('daily-question').textContent = qotd;
+    }
+
+    function loadNewQuote() {
+      const quote = gamificationEngine.getRandomQuote();
+      document.getElementById('quote-text').textContent = `"${quote.text}"`;
+      document.getElementById('quote-author').textContent = quote.author;
+    }
+
+    function loadRapidFireCarousel() {
+      const shuffled = gamificationEngine.getShuffledRapidFire().slice(0, 10).filter(q => q && q.trim());
+      const carousel = document.getElementById('rapid-fire-carousel');
+      carousel.innerHTML = '';
+
+      shuffled.forEach((question, index) => {
+        const item = document.createElement('div');
+        item.className = 'carousel-item card card-primary';
+        item.innerHTML = `
+          <div style="color: white; display: flex; flex-direction: column; height: 100%; justify-content: center;">
+            <span style="font-size: 0.875rem; opacity: 0.9;">Question ${index + 1}</span>
+            <p style="font-size: 1.25rem; font-weight: 600; margin: 0; line-height: 1.5; color: white;">
+              ${question}
+            </p>
+          </div>
+        `;
+        carousel.appendChild(item);
+      });
+    }
+
+    function scrollCarousel(direction) {
+      const carousel = document.getElementById('rapid-fire-carousel');
+      const scrollAmount = carousel.offsetWidth;
+      carousel.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+
+    // Sound Effects (Web Audio API)
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(frequency = 440, duration = 0.1, type = 'sine') {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = type;
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    }
+
+    // Play sound on button hover
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('.btn, .carousel-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('mouseenter', () => playSound(523.25, 0.05)); // C5
+      });
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initializeDailyElements);
+
+    // Refresh daily elements every hour
+    setInterval(initializeDailyElements, 3600000);
+  </script>
+</body>
+</html>
