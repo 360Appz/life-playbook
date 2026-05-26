@@ -355,16 +355,23 @@ nav a:hover::after {
 
 /* Nested carousel for section cards */
 .carousel-inner[id*="nested-carousel"] {
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: none !important;
   -webkit-overflow-scrolling: touch;
   gap: var(--spacing-lg) !important;
   padding: var(--spacing-lg);
   scroll-padding: var(--spacing-lg);
+  scroll-behavior: smooth;
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.carousel-inner[id*="nested-carousel"]::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari */
 }
 
 .carousel-inner[id*="nested-carousel"] .section-card {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  scroll-snap-align: none !important;
+  scroll-snap-stop: none !important;
 }
 
 @media (max-width: 768px) {
